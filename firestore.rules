@@ -1,0 +1,19 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId}/{document=**} {
+        allow read: if isOwner(userId) && isSignedIn();
+        allow write: if isOwner(userId) && isSignedIn();
+        allow update: if isOwner(userId) && isSignedIn();
+        allow delete: if isOwner(userId) && isSignedIn();
+    }
+
+    function isOwner(userId) {
+        return request.auth.uid == userId;
+    }
+
+    function isSignedIn() {
+        return request.auth != null;
+    }
+  }
+}
